@@ -1,5 +1,4 @@
 using Godot;
-using System;
 using System.Collections.Generic;
 
 public partial class Player : Area2D
@@ -7,9 +6,10 @@ public partial class Player : Area2D
 	[Export]
 	public float ThrustStrength { get; set; } = 100f;
 	[Export]
-	public float RotationSpeed = 2.0f;
-	public Vector2 Velocity = Vector2.Zero;
+	public float RotationTorque { get; set; } = 1f;
 
+	private Vector2 Velocity = Vector2.Zero;
+	private float angularVelocity = 0f;
 	private readonly List<PlanetArea> _influencedBy = [];
 
 	public override void _Ready()
@@ -33,10 +33,17 @@ public partial class Player : Area2D
 	{
 		// Rotation
 		if (Input.IsActionPressed("rotate_left"))
-			Rotation -= RotationSpeed * (float)delta;
+		{
+			angularVelocity -= RotationTorque * (float)delta;
+		}
 
 		if (Input.IsActionPressed("rotate_right"))
-			Rotation += RotationSpeed * (float)delta;
+		{
+			angularVelocity += RotationTorque * (float)delta;
+		}
+
+		// Apply rotation
+		Rotation += angularVelocity * (float)delta;
 
 		// Thrust
 		if (Input.IsActionPressed("thrust"))
@@ -55,7 +62,7 @@ public partial class Player : Area2D
 			Velocity += dir * gravity * (float)delta;
 		}
 
-		// Result
+		// Apply velocity
 		GlobalPosition += Velocity * (float)delta;
 	}
 
