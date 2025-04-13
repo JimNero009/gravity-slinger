@@ -5,9 +5,12 @@ using System.Collections.Generic;
 public partial class Player : Area2D
 {
 	[Export]
-	public int Speed { get; set; } = 100;
+	public float ThrustStrength { get; set; } = 100f;
+	[Export]
+	public float RotationSpeed = 2.0f;
+	public Vector2 Velocity = Vector2.Zero;
 
-	private List<PlanetArea> _influencedBy = new List<PlanetArea>();
+	private readonly List<PlanetArea> _influencedBy = [];
 
 	public override void _Ready()
 	{
@@ -28,23 +31,32 @@ public partial class Player : Area2D
 
 	public override void _Process(double delta)
 	{
-		var velocity = Vector2.Zero;
+		// Rotation
+		if (Input.IsActionPressed("rotate_left"))
+			Rotation -= RotationSpeed * (float)delta;
 
-		foreach (var planet in _influencedBy)
-		{
-			velocity += planet.GravitationalEffect(this);
-		}
+		if (Input.IsActionPressed("rotate_right"))
+			Rotation += RotationSpeed * (float)delta;
 
+		// Thrust
 		if (Input.IsActionPressed("thrust"))
 		{
-			velocity.X += 1;
+			Vector2 thrustDirection = new Vector2(1, 0).Rotated(Rotation);
+			Velocity += thrustDirection * ThrustStrength * (float)delta;
 		}
 
-		if (velocity.Length() > 0)
+		// Gravity
+		foreach (PlanetArea planet in _influencedBy)
 		{
-			velocity = velocity.Normalized() * Speed;
+			Vector2 dir = (planet.GlobalPosition - GlobalPosition).Normalized();
+			float dist = GlobalPosition.DistanceTo(planet.GlobalPosition);
+			float gravity = planet.GravityStrength / Mathf.Max(dist * dist, 1);
+
+			Velocity += dir * gravity * (float)delta;
 		}
 
-		Position += velocity * (float)delta;
+		// Result
+		GlobalPosition += Velocity * (float)delta;
 	}
+
 }

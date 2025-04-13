@@ -2,15 +2,12 @@ using Godot;
 
 public partial class PlanetArea : Area2D
 {
-	public Vector2 GravitationalEffect(Player player)
-	{
-		Vector2 toPlanet = (GlobalPosition - player.GlobalPosition).Normalized();
-		return new Vector2(-toPlanet.Y, toPlanet.X);
-	}
+	[Export]
+	public float GravityStrength { get; set; } = 100000f;
 
 	private void OnAreaEntered(Area2D area)
 	{
-		if (!(area is Player))
+		if (area is not Player)
 		{
 			return;
 		}
@@ -21,7 +18,7 @@ public partial class PlanetArea : Area2D
 
 	private void OnAreaExited(Area2D area)
 	{
-		if (!(area is Player))
+		if (area is not Player)
 		{
 			return;
 		}
