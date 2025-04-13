@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://016sl2nh7fom"]
+
+[ext_resource type="Texture2D" uid="uid://iog75ttq47rl" path="res://assets/planet.png" id="1_cktii"]
+[ext_resource type="Script" uid="uid://dedd8o8lww1g4" path="res://scripts/PlanetArea.cs" id="1_h8ms6"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_0wmcs"]
+radius = 31.0161
+
+[node name="Planet" type="Node2D"]
+metadata/_edit_group_ = true
+
+[node name="PlanetArea" type="Area2D" parent="."]
+script = ExtResource("1_h8ms6")
+
+[node name="PlanetCollision" type="CollisionShape2D" parent="PlanetArea"]
+shape = SubResource("CircleShape2D_0wmcs")
+
+[node name="PlanetSprite" type="Sprite2D" parent="."]
+texture = ExtResource("1_cktii")
+
+[connection signal="area_entered" from="PlanetArea" to="PlanetArea" method="OnAreaEntered"]
+[connection signal="area_exited" from="PlanetArea" to="PlanetArea" method="OnAreaExited"]
