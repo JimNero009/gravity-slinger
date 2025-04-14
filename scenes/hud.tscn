@@ -1,0 +1,27 @@
+[gd_scene load_steps=2 format=3 uid="uid://c65sqynbn2vi0"]
+
+[ext_resource type="Script" uid="uid://cwysp181q8s1w" path="res://scripts/HUD.cs" id="1_ahhtf"]
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("1_ahhtf")
+
+[node name="ThrustDial" type="ProgressBar" parent="."]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -52.0
+offset_right = -48.0
+offset_bottom = 27.0
+grow_horizontal = 0
+max_value = 300.0
+
+[node name="SpeedLabel" type="Label" parent="."]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -152.0
+offset_right = -112.0
+offset_bottom = 23.0
+grow_horizontal = 0
+horizontal_alignment = 1
+vertical_alignment = 1

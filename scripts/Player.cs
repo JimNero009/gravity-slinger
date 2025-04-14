@@ -6,15 +6,20 @@ public partial class Player : Area2D
 	[Export]
 	public float ThrustStrength { get; set; } = 100f;
 	[Export]
+	public float ThrustAcceleration { get; set; } = 5f;
+	[Export]
 	public float RotationTorque { get; set; } = 1f;
 
 	private Vector2 Velocity = Vector2.Zero;
 	private float angularVelocity = 0f;
+	private float thrustAmount = 0f;
 	private readonly List<PlanetArea> _influencedBy = [];
+	private HUD _hud;
 
 	public override void _Ready()
 	{
 		GD.Print("Rocket ready!");
+		_hud = GetNode<HUD>("/root/Main/HUD");
 	}
 
 	public void EnterPlanetaryInfluence(PlanetArea planet)
@@ -46,11 +51,10 @@ public partial class Player : Area2D
 		Rotation += angularVelocity * (float)delta;
 
 		// Thrust
-		if (Input.IsActionPressed("thrust"))
-		{
-			Vector2 thrustDirection = new Vector2(1, 0).Rotated(Rotation);
-			Velocity += thrustDirection * ThrustStrength * (float)delta;
-		}
+		float targetThrust = Input.IsActionPressed("thrust") ? ThrustStrength : 0f;
+		Vector2 thrustDirection = new Vector2(1, 0).Rotated(Rotation);
+		thrustAmount = Mathf.Lerp(thrustAmount, targetThrust, ThrustAcceleration * (float)delta);
+		Velocity += thrustDirection * thrustAmount * (float)delta;
 
 		// Gravity
 		foreach (PlanetArea planet in _influencedBy)
@@ -64,6 +68,9 @@ public partial class Player : Area2D
 
 		// Apply velocity
 		GlobalPosition += Velocity * (float)delta;
+
+		// Update display
+		_hud.UpdateHUD(thrustAmount, ThrustStrength, Velocity);
 	}
 
 }
